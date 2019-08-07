@@ -5,8 +5,11 @@ import logging
 import random
 import sys
 import time
+from multiprocessing import Pool
 
 import coloredlogs
+import matplotlib.pyplot as pyplot
+import numpy as np
 import pygame
 import pygame.locals as pl
 import pygcurse
@@ -24,10 +27,33 @@ FPS = 100
 def main():
     """Main function"""
     log_fmt = "%(asctime)s %(name)s[%(lineno)d] %(levelname)s %(message)s"
-    coloredlogs.install(level=logging.DEBUG, fmt=log_fmt)
+    # coloredlogs.install(level=logging.DEBUG, fmt=log_fmt)
+    coloredlogs.install(level=1000, fmt=log_fmt)
 
+    size = 10_000
+    results = np.zeros(size)
+    with Pool() as pool:
+        for idx, result in enumerate(
+            pool.imap_unordered(run_random_walk, (False for _ in range(size)))
+        ):
+            results[idx] = result
+
+    lengths, freqs = np.unique(results, return_counts=True)
+    fig, ax = pyplot.subplots()
+    ax.plot(lengths, freqs / size)
+    ax.set_xlabel("Snake length")
+    ax.set_ylabel("Frequency")
+    fig.savefig("snake_lengths.pdf")
+
+
+def run_random_walk(draw=False):
+    """Run the random walk and return the final snake length.
+
+    Drawing may be enabled.
+
+    """
     game = Game(WINWIDTH, WINHEIGHT)
-    game.drawing_enabled = False
+    game.drawing_enabled = draw
 
     if game.drawing_enabled:
         win = pygcurse.PygcurseWindow(WINWIDTH, WINHEIGHT + 4, fullscreen=False)
@@ -53,9 +79,7 @@ def main():
     else:
         while not game.ended:
             random_walk(game)
-        print(game.snake_length)
-
-    LOGGER.info(f"Final snake length: {game.snake_length}")
+    return game.snake_length
 
 
 def random_walk(game):
@@ -66,6 +90,7 @@ def random_walk(game):
     avoiding itself and walls.
 
     """
+    LOGGER.info(f"Final snake length: {game.snake_length}")
     # Get a random direction
     directions = {
         (game.snake_head[0] + 1, game.snake_head[1]),
