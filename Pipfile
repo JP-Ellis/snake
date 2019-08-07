@@ -7,6 +7,9 @@ verify_ssl = true
 python-language-server = {extras = ["all"],version = "*"}
 
 [packages]
+numpy = "*"
+scipy = "*"
+matplotlib = "*"
 pygame = "*"
 pygcurse = "*"
 coloredlogs = "*"
