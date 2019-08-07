@@ -54,7 +54,7 @@ class Game:
     def empty_spaces(self):
         """Return the set of indices corresponding to empty sites."""
         empty_spaces = self.whole_space - self.apples - set(self.snake)
-        LOGGER.debug(f"Empty spaces: {len(empty_spaces)}")
+        LOGGER.log(5, f"Empty spaces: {len(empty_spaces)}")
         return empty_spaces
 
     def make_apple(self):
@@ -132,6 +132,7 @@ class Game:
             self.make_apple()
 
     def draw(self, win):
+        """Draw the game in the window."""
         win.write("O", fgcolor="orange", x=self.snake[0][0], y=self.snake[0][1])
         if len(self.snake) > 1:
             for segment in self.snake[1:-1]:
