@@ -21,6 +21,7 @@ class Game:
         self.width = width
         self.height = height
         self.ended = False
+        self.drawing_enabled = True
 
         if snake_head_pos is None:
             snake_head_pos = (width // 2, height // 2)
@@ -133,6 +134,9 @@ class Game:
 
     def draw(self, win):
         """Draw the game in the window."""
+        if not self.drawing_enabled:
+            return
+
         win.write("O", fgcolor="orange", x=self.snake[0][0], y=self.snake[0][1])
         if len(self.snake) > 1:
             for segment in self.snake[1:-1]:
