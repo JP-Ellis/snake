@@ -60,53 +60,33 @@ class Game:
         else:
             self.apples.add(random.choice(tuple(self.empty_spaces)))
 
-    def move_up(self, costly=True):
+    def move_to(self, location, cost=0):
+        """Move the snake's head to the given location."""
+        if self.digesting > 0:
+            self.snake = [location] + self.snake
+            self.digesting -= 1
+        else:
+            self.snake = [location] + self.snake[:-1]
+
+        self.check_move()
+        if cost:
+            self.health -= 1
+
+    def move_up(self, cost=0):
         """Make the snake's head up by one"""
-        if self.digesting > 0:
-            self.snake = [(self.snake[0][0], self.snake[0][1] - 1)] + self.snake
-            self.digesting -= 1
-        else:
-            self.snake = [(self.snake[0][0], self.snake[0][1] - 1)] + self.snake[:-1]
+        self.move_to((self.snake[0][0], self.snake[0][1] - 1), cost)
 
-        self.check_move()
-        if costly:
-            self.health -= 1
-
-    def move_down(self, costly=True):
+    def move_down(self, cost=0):
         """Move the snake's head down by one"""
-        if self.digesting > 0:
-            self.snake = [(self.snake[0][0], self.snake[0][1] + 1)] + self.snake
-            self.digesting -= 1
-        else:
-            self.snake = [(self.snake[0][0], self.snake[0][1] + 1)] + self.snake[:-1]
+        self.move_to((self.snake[0][0], self.snake[0][1] + 1), cost)
 
-        self.check_move()
-        if costly:
-            self.health -= 1
-
-    def move_left(self, costly=True):
+    def move_left(self, cost=0):
         """Move the snake's head left by one"""
-        if self.digesting > 0:
-            self.snake = [(self.snake[0][0] - 1, self.snake[0][1])] + self.snake
-            self.digesting -= 1
-        else:
-            self.snake = [(self.snake[0][0] - 1, self.snake[0][1])] + self.snake[:-1]
+        self.move_to((self.snake[0][0] - 1, self.snake[0][1]), cost)
 
-        self.check_move()
-        if costly:
-            self.health -= 1
-
-    def move_right(self, costly=True):
+    def move_right(self, cost=0):
         """Move the snake's head right by one"""
-        if self.digesting > 0:
-            self.snake = [(self.snake[0][0] + 1, self.snake[0][1])] + self.snake
-            self.digesting -= 1
-        else:
-            self.snake = [(self.snake[0][0] + 1, self.snake[0][1])] + self.snake[:-1]
-
-        self.check_move()
-        if costly:
-            self.health -= 1
+        self.move_to((self.snake[0][0] + 1, self.snake[0][1]), cost)
 
     def check_move(self):
         """Perform checks after a move has been performed."""
