@@ -25,19 +25,35 @@ def main():
     """Main function"""
     log_fmt = "%(asctime)s %(name)s[%(lineno)d] %(levelname)s %(message)s"
     coloredlogs.install(level=logging.DEBUG, fmt=log_fmt)
-    win = pygcurse.PygcurseWindow(WINWIDTH, WINHEIGHT + 4, fullscreen=False)
-    pygame.display.set_caption("Window Title")
-    win.autoupdate = False
-    clock = pygame.time.Clock()
 
     game = Game(WINWIDTH, WINHEIGHT)
+    game.drawing_enabled = False
 
-    while not game.ended:
-        win.fill(bgcolor="blue")
-        random_walk(game)
-        game.draw(win)
-        win.update()
-        clock.tick(FPS)
+    if game.drawing_enabled:
+        win = pygcurse.PygcurseWindow(WINWIDTH, WINHEIGHT + 4, fullscreen=False)
+        pygame.display.set_caption("Window Title")
+        win.autoupdate = False
+        clock = pygame.time.Clock()
+
+        while not game.ended:
+            for event in pygame.event.get():
+                LOGGER.log(5, f"event: {event}")
+
+                # Escape to quit
+                if event.type == pl.QUIT or (
+                    event.type == pl.KEYDOWN and event.key == pl.K_ESCAPE
+                ):
+                    terminate()
+
+            win.fill(bgcolor="blue")
+            random_walk(game)
+            game.draw(win)
+            win.update()
+            clock.tick(FPS)
+    else:
+        while not game.ended:
+            random_walk(game)
+        print(game.snake_length)
 
     LOGGER.info(f"Final snake length: {game.snake_length}")
 
@@ -50,15 +66,6 @@ def random_walk(game):
     avoiding itself and walls.
 
     """
-    for event in pygame.event.get():
-        LOGGER.log(5, f"event: {event}")
-
-        # Escape to quit
-        if event.type == pl.QUIT or (
-            event.type == pl.KEYDOWN and event.key == pl.K_ESCAPE
-        ):
-            terminate()
-
     # Get a random direction
     directions = {
         (game.snake_head[0] + 1, game.snake_head[1]),
@@ -69,7 +76,6 @@ def random_walk(game):
 
     apple_directions = directions & game.apples
     if apple_directions:
-        LOGGER.debug("Have an apple in the vicinity.")
         game.move_to(random.sample(apple_directions, 1)[0])
     else:
         valid_directions = directions & game.empty_spaces
