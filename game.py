@@ -59,11 +59,11 @@ class Game:
 
     def make_apple(self):
         """Add an apple to the game"""
-        if len(self.empty_spaces) == 0:
-            LOGGER.warn(f"There are no empty spaces to place an apple.")
+        if not self.empty_spaces:
+            LOGGER.warning(f"There are no empty spaces to place an apple.")
             self.ended = True
         else:
-            self.apples.add(random.choice(tuple(self.empty_spaces)))
+            self.apples.add(random.sample(self.empty_spaces, 1)[0])
 
     def move_to(self, location, cost=0):
         """Move the snake's head to the given location."""
@@ -101,7 +101,8 @@ class Game:
         self.eat_apple()
 
     def has_collision(self):
-        """Check if there has been a collision and return the position of the collision and type"""
+        """Check if there has been a collision and return the position of the
+        collision and type"""
         snake_head = self.snake[0]
 
         # Self collision of the snake
