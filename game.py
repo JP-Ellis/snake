@@ -25,11 +25,7 @@ class Game:
 
         if snake_head_pos is None:
             snake_head_pos = (width // 2, height // 2)
-        self.snake = [
-            snake_head_pos,
-            (snake_head_pos[0], snake_head_pos[1] + 1),
-            (snake_head_pos[0], snake_head_pos[1] + 2),
-        ]
+        self.snake = [snake_head_pos]
         self.apples = set()
         self.health = 100
         self.digesting = 0
