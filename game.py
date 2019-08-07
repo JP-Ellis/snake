@@ -41,6 +41,11 @@ class Game:
             self.make_apple()
 
     @property
+    def snake_head(self):
+        """Return the position of the snake's head"""
+        return self.snake[0]
+
+    @property
     def snake_length(self):
         """Length of the snake"""
         return len(self.snake)
