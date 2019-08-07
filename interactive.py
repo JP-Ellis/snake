@@ -61,7 +61,6 @@ def handle_events(game):
 
 
 def terminate():
-    pygame.quit()
     sys.exit()
 
 
